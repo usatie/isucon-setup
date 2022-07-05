@@ -24,5 +24,5 @@ sudo alp ltsv --file /var/log/nginx/access.log -r --sort=sum \
 sudo pt-query-digest --explain h=localhost,u=isucon,p=isucon \
 	/var/log/mysql/mysql-slow.log \
 	| tee $RESULTDIR/slowquery.digest.$DATE
-curl http://localhost:3000/measure | tee $RESULTDIR/measure.digest.$DATE
+# curl http://localhost:3000/measure | tee $RESULTDIR/measure.digest.$DATE
 echo "Finish log_bench.sh"
