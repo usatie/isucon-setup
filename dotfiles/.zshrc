@@ -1,6 +1,10 @@
 export VISUAL=vim
 export EDITOR="$VISUAL"
+# export ISUDIR=/home/isucon/private_isu
+# export RESDIR=$ISUDIR/results
+# export SCRIPTDIR=$ISUDIR/scripts
 # export PATH=/home/isucon/isucon-setup/script:$PATH
+
 # alias isumysql='mysql -u isucon -p isucon'
 # alias isubench='sudo /home/isucon/webapp/scripts/bench.sh'
 # alias isurotate='sudo /home/isucon/webapp/scripts/log_rotate.sh'
