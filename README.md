@@ -15,11 +15,36 @@ rm go1.18.3.linux-amd64.tar.gz
 3. Run `./script/symlink.sh` to setup dotfiles
 4. Switch to golang
 5. Enable nginx access log
+`/etc/nginx/`
+```
+log_format ltsv "time:$time_local"
+	"\thost:$remote_addr"
+	"\tforwardedfor:$http_x_forwarded_for"
+	"\treq:$request"
+	"\tstatus:$status"
+	"\tmethod:$request_method"
+	"\turi:$request_uri"
+	"\tsize:$body_bytes_sent"
+	"\treferer:$http_referer"
+	"\tua:$http_user_agent"
+	"\treqtime:$request_time"
+	"\tcache:$upstream_http_x_cache"
+	"\truntime:$upstream_http_x_runtime"
+	"\tapptime:$upstream_response_time"
+	"\tvhost:$host";
+access_log /var/log/nginx/access.log ltsv;
+```
 6. Enable MySQL slow log
+`/etc/mysql/`
+``` 
+slow_query_log         = ON
+slow_query_log_file    = /var/log/mysql/mysql-slow.log
+long_query_time        = 0
+```
 7. Enable Golang log
 8. Enable pprof
 9. (Enable najeira/measure)
-10. Configure save.sh
+10. Configure log_bench.sh
 11. Run the benchmarker
 12. Setup utility variables and aliases
 ```
