@@ -1,5 +1,7 @@
 #!/bin/bash
 echo "Start rsync.sh"
-rsync /etc/nginx/sites-available/isucon.conf conf/isucon.conf
-rsync /etc/mysql/mysql.conf.d/mysqld.cnf conf/mysqld.cnf
+CONFDIR=$ISUDIR/conf
+sudo rsync -qauh /etc/nginx $CONFDIR
+sudo rsync -qauh /etc/mysql $CONFDIR
+sudo chown -R isucon:isucon $CONFDIR
 echo "Finish rsync.sh"

@@ -28,7 +28,7 @@ export RESULTDIR=$ISUDIR/results
 export SCRIPTDIR=$ISUDIR/scripts
 export PATH=/home/isucon/isucon-setup/script:$PATH
 
-alias isumysql='mysql -u isucon -p'
+alias isumysql='mysql isucondition -u isucon -p'
 alias isubench='$SCRIPTDIR/log_bench.sh'
 alias isurotate='$SCRIPTDIR/log_rotate.sh'
 alias isubuild='$SCRIPTDIR/build.sh'
