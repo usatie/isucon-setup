@@ -18,3 +18,7 @@ vim +PlugInstall +qa
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 # zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+# go goimports
+go install golang.org/x/tools/cmd/goimports@latest
+# go pprof
+go install github.com/google/pprof@latest
