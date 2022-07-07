@@ -6,7 +6,7 @@ export EDITOR="$VISUAL"
 # export PATH=/home/isucon/isucon-setup/script:$PATH
 export ISUDIR=/home/isucon/webapp
 export RESULTDIR=$ISUDIR/results
-export SCRIPTDIR=/home/isucon/isucon-setup/util
+export SCRIPTDIR=$ISUDIR/util
 export PATH=$SCRIPTDIR:$PATH
 
 alias isumysql='mysql isucondition -u isucon -p'
