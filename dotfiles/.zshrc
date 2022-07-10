@@ -10,7 +10,7 @@ echo '[WARNING] Edit dotfiles/.zshrc to configure $RESULTDIR'
 # export RESULTDIR=$ISUDIR/results
 
 echo '[WARNING] Edit dotfiles/.zshrc to configure $SCRIPTDIR'
-# export SCRIPTDIR=$ISUDIR/isucon-setup-main/util
+# export SCRIPTDIR=$ISUDIR/isucon-setup/util
 
 echo '[WARNING] Edit dotfiles/.zshrc to configure $PATH'
 # export PATH=$SCRIPTDIR:$PATH

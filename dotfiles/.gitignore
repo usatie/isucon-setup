@@ -7,3 +7,5 @@
 !etc/*
 !bench
 !bench/*
+!isucon-setup
+!isucon-setup/*
