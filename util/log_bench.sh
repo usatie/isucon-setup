@@ -12,6 +12,7 @@ mkdir -p $RESULTDIR
 LINES=20 top -b -d 1 -n $DURATION -w > $RESULTDIR/top.$DATE &
 sudo iotop -b -d 1 -n $DURATION -oaP > $RESULTDIR/iotop.$DATE &
 dstat -tcdm --tcp -n 1 $DURATION > $RESULTDIR/dstat.$DATE &
+go tool pprof -raw -seconds $DURATION http://localhost:3000/debug/pprof/profile >/dev/null &
 
 echo "Ready to run the benchmarker"
 
