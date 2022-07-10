@@ -78,8 +78,8 @@ func main () {
 13. Run the benchmarker
 14. Setup utility variables and aliases
 ```
-export ISUDIR=/home/isucon/webapp
-export RESULTDIR=$ISUDIR/results
+export APPDIR=/home/isucon/webapp
+export RESULTDIR=$APPDIR/results
 export SCRIPTDIR=/home/isucon/isucon-setup/script
 export PATH=/home/isucon/isucon-setup/script:$PATH
 

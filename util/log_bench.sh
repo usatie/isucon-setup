@@ -1,8 +1,8 @@
 #!/bin/bash
 # Configure these values before use
-# ISUDIR=/home/isucon/private_isu
-# RESDIR=$ISUDIR/results
-# SCRIPTDIR=$ISUDIR/scripts
+# APPDIR=/home/isucon/private_isu
+# RESDIR=$APPDIR/results
+# SCRIPTDIR=$APPDIR/scripts
 DURATION=70
 DATE=$(date +%Y%m%d-%H%M%S)
 

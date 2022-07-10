@@ -1,4 +1,4 @@
 #!/bin/bash
 echo "Start build.sh"
-make -C $ISUDIR/go
+make -C $APPDIR/go
 echo "Finish build.sh"
