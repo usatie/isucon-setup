@@ -1,11 +1,8 @@
 #!/bin/bash
-# Configure these values before use
-# APPDIR=/home/isucon/private_isu
-# RESDIR=$APPDIR/results
-# SCRIPTDIR=$APPDIR/scripts
 DURATION=70
 DATE=$(date +%Y%m%d-%H%M%S)
 
+source $HOME/env.sh
 echo "Start log_bench.sh"
 
 mkdir -p $RESULTDIR
@@ -22,8 +19,11 @@ sudo alp ltsv --file /var/log/nginx/access.log -r --sort=sum \
 	-m "/api/condition/\w+" \
 	-o count,1xx,2xx,3xx,4xx,5xx,method,uri,min,avg,max,sum \
 	| tee $RESULTDIR/alp.digest.$DATE
-sudo pt-query-digest --explain h=localhost,u=isucon,p=isucon \
+sudo pt-query-digest --explain h=$MYSQL_HOST,u=$MYSQL_USER,p=$MYSQL_PASS \
 	/var/log/mysql/mysql-slow.log \
 	| tee $RESULTDIR/slowquery.digest.$DATE
+sudo trdsql -driver mysql -dsn "$MYSQL_USER:$MYSQL_PASS@/$MYSQL_DBNAME" \
+	-oh -iltsv $(cat $SQLDIR/access.sql) \
+	| tee $RESULTDIR/trdsql.digest.$DATE
 # curl http://localhost:3000/measure | tee $RESULTDIR/measure.digest.$DATE
 echo "Finish log_bench.sh"

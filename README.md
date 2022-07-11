@@ -80,15 +80,11 @@ func main () {
 ```
 export APPDIR=/home/isucon/webapp
 export RESULTDIR=$APPDIR/results
-export SCRIPTDIR=/home/isucon/isucon-setup/script
-export PATH=/home/isucon/isucon-setup/script:$PATH
+export SCRIPTDIR=/home/isucon/isucon-setup/util
+export SQLDIR=/home/isucon/isucon-setup/sql
+export PATH=$SCRIPTDIR:$PATH
 
-alias isumysql='mysql isucondition -u isucon -p'
-alias isubench='$SCRIPTDIR/log_bench.sh'
-alias isurotate='$SCRIPTDIR/log_rotate.sh'
-alias isubuild='$SCRIPTDIR/build.sh'
-alias isurestart='$SCRIPTDIR/restart.sh'
-alias isursync='$SCRIPTDIR/rsync.sh'
+alias isumysql='source $HOME/env.sh && mysql $MYSQL_DBNAME -u $MYSQL_USER -p'
 ```
 
 ## Clean up
