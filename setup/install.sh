@@ -22,3 +22,8 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/p
 go install golang.org/x/tools/cmd/goimports@latest
 # go pprof
 go install github.com/google/pprof@latest
+# trdsql
+wget https://github.com/noborus/trdsql/releases/download/v0.10.0/trdsql_v0.10.0_linux_amd64.zip \
+	&& unzip trdsql_v0.10.0_linux_amd64.zip \
+	&& sudo install ./trdsql_v0.10.0_linux_amd64/trdsql /usr/local/bin/trdsql \
+	&& rm -rf trdsql_v0.10.0_linux_amd64.zip trdsql_v0.10.0_linux_amd64

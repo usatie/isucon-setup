@@ -20,7 +20,7 @@ sleep $DURATION
 
 sudo alp ltsv --file /var/log/nginx/access.log -r --sort=sum \
 	-m "/api/condition/\w+" \
-	-o count,method,uri,min,avg,max,sum \
+	-o count,1xx,2xx,3xx,4xx,5xx,method,uri,min,avg,max,sum \
 	| tee $RESULTDIR/alp.digest.$DATE
 sudo pt-query-digest --explain h=localhost,u=isucon,p=isucon \
 	/var/log/mysql/mysql-slow.log \
