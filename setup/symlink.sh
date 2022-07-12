@@ -6,7 +6,7 @@ REPOPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1; cd .. >/dev/null 2>&1; pwd
 ln -si $REPOPATH/dotfiles/.gitconfig ~/.gitconfig
 
 # .gitignore
-ln -si $REPOPATH/dotfiles/.gitignore ~/.gitignore
+ln -si $REPOPATH/dotfiles/.gitignore-global ~/.gitignore
 
 # .vimrc
 ln -si $REPOPATH/dotfiles/.vimrc ~/.vimrc
