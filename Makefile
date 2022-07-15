@@ -85,14 +85,14 @@ install-tools:
 		&& sudo install ./alp /usr/local/bin/alp \
 		&& rm alp_linux_amd64.zip alp
 	mkdir -p $(ALP_CONFIG_DIR)
-	wget https://github.com/usatie/isucon-setup/blob/main/tool-config/alp/config.yml $(ALP_CONFIG)
+	wget https://github.com/usatie/isucon-setup/blob/main/tool-config/alp/config.yml -O $(ALP_CONFIG)
 	# trdsql
 	wget https://github.com/noborus/trdsql/releases/download/v0.10.0/trdsql_v0.10.0_linux_amd64.zip \
 		&& unzip trdsql_v0.10.0_linux_amd64.zip \
 		&& sudo install ./trdsql_v0.10.0_linux_amd64/trdsql /usr/local/bin/trdsql \
 		&& rm -rf trdsql_v0.10.0_linux_amd64.zip trdsql_v0.10.0_linux_amd64
 	mkdir -p $(TRDSQL_DIR)
-	wget https://github.com/usatie/isucon-setup/blob/main/tool-config/trdsql/access.sql $(TRDSQL_SQL)
+	wget https://github.com/usatie/isucon-setup/blob/main/tool-config/trdsql/access.sql -O $(TRDSQL_SQL)
 	# go (goimports/pprof)
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install github.com/google/pprof@latest
@@ -117,6 +117,7 @@ git-setup:
 	@echo "!Makefile" >> $(GITIGNORE_PATH)
 	@echo "!.gitignore" >> $(GITIGNORE_PATH)
 	@echo "!results" >> $(GITIGNORE_PATH)
+	@echo "!tool-config" >> $(GITIGNORE_PATH)
 	@echo "!s1" >> $(GITIGNORE_PATH)
 	@echo "!s2" >> $(GITIGNORE_PATH)
 	@echo "!s3" >> $(GITIGNORE_PATH)
