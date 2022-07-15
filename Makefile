@@ -9,9 +9,20 @@ BIN_NAME:=isucondition
 BUILD_DIR:=/home/isucon/webapp/go
 SERVICE_NAME:=$(BIN_NAME).go.service
 
+# paths should be abosolute path
 DB_PATH:=/etc/mysql
 NGINX_PATH:=/etc/nginx
-SYSTEMD_PATH:=/etc/systemd/system
+SYSTEMD_PATH:=/etc/systemd
+ENVSH_PATH:=$(HOME)/env.sh
+DB_DIR_PATH:=/etc
+NGINX_DIR_PATH:=/etc
+SYSTEMD_DIR_PATH:=/etc
+ENVSH_DIR_PATH:=$(HOME)
+
+GITIGNORE_PATH:=$(HOME)/.gitignore
+ZSHRC_PATH:=$(HOME)/.zshrc
+BASHRC_PATH:=$(HOME)/.bashrc
+VIMRC_PATH:=$(HOME)/.vimrc
 
 NGINX_LOG:=/var/log/nginx/access.log
 NGINX_ERROR_LOG:=/var/log/nginx/error.log
@@ -27,7 +38,7 @@ oh-my-zsh:
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 .PHONY: setup
-setup: install-tools git-setup
+setup: install-tools bash-setup zsh-setup vim-setup git-setup
 
 .PHONY: get-conf
 get-conf: check-server-id get-db-conf get-nginx-conf get-service-file get-envsh
@@ -59,14 +70,13 @@ pprof-check:
 access-db:
 	mysql -h $(MYSQL_HOST) -P $(MYSQL_PORT) -u $(MYSQL_USER) -p$(MYSQL_PASS) $(MYSQL_DBNAME)
 
-
 # Components
 .PHONY: install-tools
 install-tools:
+	# apt install
 	sudo apt update
 	sudo apt upgrade
 	sudo apt install -y percona-toolkit dstat git unzip snapd graphviz tree net-tools iotop apache2-utils
-
 	# alp
 	wget https://github.com/tkuchiki/alp/releases/download/v1.0.9/alp_linux_amd64.zip \
 		&& unzip alp_linux_amd64.zip \
@@ -77,50 +87,56 @@ install-tools:
 		&& unzip trdsql_v0.10.0_linux_amd64.zip \
 		&& sudo install ./trdsql_v0.10.0_linux_amd64/trdsql /usr/local/bin/trdsql \
 		&& rm -rf trdsql_v0.10.0_linux_amd64.zip trdsql_v0.10.0_linux_amd64
-
 	# go (goimports/pprof)
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install github.com/google/pprof@latest
-
 	# zsh-autosuggestions
 	git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-
-.PHONY: zshrc-setup
-zshrc-setup:
-	@echo 'export VISUAL=vim' >> ~/.zshrc
-	@echo 'export EDITOR="$VISUAL"' >> ~/.zshrc
-	@echo 'plugins+=(zsh-autosuggestions)' >> ~/.zshrc
-	@echo 'source $ZSH/oh-my-zsh.sh' >> ~/.zshrc
-	exec $SHELL
-
-.PHONY: bashrc-setup
-bashrc-setup:
-	echo 'export VISUAL=vim' >> ~/.bashrc
-	echo 'export EDITOR="$VISUAL"' >> ~/.bashrc
 
 .PHONY: git-setup
 git-setup:
 	git config --global user.email "isucon@example.com"
 	git config --global user.name "isucon"
-
 	ssh-keygen -t ed25519
+	@echo "/*" >> $(GITIGNORE_PATH)
+	@echo "!.gitignore" >> $(GITIGNORE_PATH)
+	@echo "!env.sh" >> $(GITIGNORE_PATH)
+	@echo "!webapp" >> $(GITIGNORE_PATH)
+	@echo "!etc" >> $(GITIGNORE_PATH)
+	@echo "!bench" >> $(GITIGNORE_PATH)
+	@echo "!isucon-setup" >> $(GITIGNORE_PATH)
+	@echo "!results" >> $(GITIGNORE_PATH)
+	@echo "!s1" >> $(GITIGNORE_PATH)
+	@echo "!s2" >> $(GITIGNORE_PATH)
+	@echo "!s3" >> $(GITIGNORE_PATH)
+
+.PHONY: zsh-setup
+zsh-setup:
+	@echo 'export VISUAL=vim' >> $(ZSHRC_PATH)
+	@echo 'export EDITOR="$VISUAL"' >> $(ZSHRC_PATH)
+	@echo 'plugins+=(zsh-autosuggestions)' >> $(ZSHRC_PATH)
+	@echo 'source $ZSH/oh-my-zsh.sh' >> $(ZSHRC_PATH)
+
+.PHONY: bash-setup
+bash-setup:
+	echo 'export VISUAL=vim' >> $(BASHRC_PATH)
+	echo 'export EDITOR="$VISUAL"' >> $(BASHRC_PATH)
 
 .PHONY: vim-setup
 vim-setup:
-	@echo 'set term=xterm-256color' >> ~/.vimrc
-	@echo 'syntax on' >> ~/.vimrc
-	@echo 'set tabstop=4' >> ~/.vimrc
-	@echo 'set shiftwidth=4' >> ~/.vimrc
-	@echo 'set autoindent' >> ~/.vimrc
-	@echo 'set number' >> ~/.vimrc
-	@echo "set viminfo='100,<200,s10,h'" >> ~/.vimrc
-
-	@echo 'call plug#begin()' >> ~/.vimrc
-	@echo "  Plug 'prabirshrestha/vim-lsp'" >> ~/.vimrc
-	@echo "  Plug 'mattn/vim-lsp-settings'" >> ~/.vimrc
-	@echo "  Plug 'mattn/vim-goimports'" >> ~/.vimrc
-	@echo 'call plug#end()' >> ~/.vimrc
-
+	@echo 'set term=xterm-256color' >> $(VIMRC_PATH
+	@echo 'syntax on' >> $(VIMRC_PATH)
+	@echo 'set tabstop=4' >> $(VIMRC_PATH)
+	@echo 'set shiftwidth=4' >> $(VIMRC_PATH)
+	@echo 'set autoindent' >> $(VIMRC_PATH)
+	@echo 'set number' >> $(VIMRC_PATH)
+	@echo "set viminfo='100,<200,s10,h" >> $(VIMRC_PATH)
+	@echo "" >> $(VIMRC_PATH)
+	@echo 'call plug#begin()' >> $(VIMRC_PATH)
+	@echo "  Plug 'prabirshrestha/vim-lsp'" >> $(VIMRC_PATH)
+	@echo "  Plug 'mattn/vim-lsp-settings'" >> $(VIMRC_PATH)
+	@echo "  Plug 'mattn/vim-goimports'" >> $(VIMRC_PATH)
+	@echo 'call plug#end()' >> $(VIMRC_PATH)
 	# vim-plug
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 		https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -138,45 +154,52 @@ endif
 .PHONY: set-as-s1
 set-as-s1:
 	echo "SERVER_ID=s1" >> env.sh
+	mkdir -P $(HOME)/s1
 
 .PHONY: set-as-s2
 set-as-s2:
 	echo "SERVER_ID=s2" >> env.sh
+	mkdir -P $(HOME)/s2
 
 .PHONY: set-as-s3
 set-as-s3:
 	echo "SERVER_ID=s3" >> env.sh
+	mkdir -P $(HOME)/s3
 
 .PHONY: get-db-conf
 get-db-conf:
-	sudo cp -R $(DB_PATH)/* ~/$(SERVER_ID)/etc/mysql
-	sudo chown $(USER) -R ~/$(SERVER_ID)/etc/mysql
+	sudo rsync -qauh $(DB_PATH) ~/$(SERVER_ID)$(DB_DIR_PATH)
+	sudo chown $(USER) -R ~/$(SERVER_ID)$(DB_DIR_PATH)
 
 .PHONY: get-nginx-conf
 get-nginx-conf:
-	sudo cp -R $(NGINX_PATH)/* ~/$(SERVER_ID)/etc/nginx
-	sudo chown $(USER) -R ~/$(SERVER_ID)/etc/nginx
+	sudo rsync -qauh $(NGINX_PATH) ~/$(SERVER_ID)$(NGINX_DIR_PATH)
+	sudo chown $(USER) -R ~/$(SERVER_ID)$(NGINX_DIR_PATH)
 
 .PHONY: get-service-file
 get-service-file:
-	sudo cp -R $(SYSTEMD_PATH)/* ~/$(SERVER_ID)/etc/systemd/system/$(SERVICE_NAME)
-	sudo chown $(USER) -R ~/$(SERVER_ID)/etc/systemd/system/$(SERVICE_NAME)
+	sudo rsync -qauh $(SYSTEMD_PATH) ~/$(SERVER_ID)$(SYSTEMD_DIR_PATH)
+	sudo chown $(USER) -R ~/$(SERVER_ID)$(SYSTEMD_DIR_PATH)
 
 .PHONY: get-envsh
 get-envsh:
-	cp ~/env.sh ~/$(SERVER_ID)/home/isucon/env.sh
+	rsync -qauh $(ENVSH_PATH) ~/$(SERVER_ID)$(ENVSH_DIR_PATH)
 
 .PHONY: deploy-db-conf
 deploy-db-conf:
-	sudo cp -R ~/$(SERVER_ID)/etc/mysql/* $(DB_PATH)
+	sudo rsync -qauh --no-o --no-g ~$(DB_PATH) $(DB_DIR_PATH)
 
 .PHONY: deploy-nginx-conf
 deploy-nginx-conf:
-	sudo cp -R ~/$(SERVER_ID)/etc/nginx/* $(NGINX_PATH)
+	sudo rsync -qauh --no-o --no-g ~$(NGINX_PATH) $(NGINX_DIR_PATH)
+
+.PHONY: deploy-service-conf
+deploy-service-conf:
+	sudo rsync -qauh --no-o --no-g ~$(SYSTEMD_PATH) $(SYSTEMD_DIR_PATH)
 
 .PHONY: deploy-envsh
 deploy-envsh:
-	cp ~/$(SERVER_ID)/home/isucon/env.sh ~/env.sh
+	sudo rsync -qauh --no-o --no-g ~$(ENVSH_PATH) $(ENVSH_DIR_PATH)
 
 .PHONY: build
 build:
@@ -196,7 +219,6 @@ mv-logs:
 	sudo truncate $(NGINX_ERROR_LOG) -s 0
 	sudo truncate $(DB_SLOW_LOG) -s 0
 	sudo truncate $(DB_ERROR_LOG) -s 0
-
 	sudo nginx -s reopen
 	sudo systemctl restart mysql
 
