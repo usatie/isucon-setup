@@ -48,7 +48,7 @@ RESULT_ALP_DIR:=$(RESULT_DIR)/alp
 
 # Main commands
 .PHONY: setup
-setup: addkey vim-setup git-setup install-tools 
+setup: addkey vim-setup git-setup install-tools makedir
 
 .PHONY: get-conf
 get-conf: check-server-id get-db-conf get-nginx-conf get-service-file get-envsh
@@ -120,6 +120,16 @@ access-db:
 	mysql -h $(MYSQL_HOST) -P $(MYSQL_PORT) -u $(MYSQL_USER) -p$(MYSQL_PASS) $(MYSQL_DBNAME)
 
 # Components
+.PHONY: makedir
+makedir:
+	mkdir -p $(ALP_CONFIG_DIR)
+	mkdir -p $(TRDSQL_DIR)
+	mkdir -p $(RESULT_TOP_DIR)
+	mkdir -p $(RESULT_DSTAT_DIR)
+	mkdir -p $(RESULT_APP_DIR)
+	mkdir -p $(RESULT_SLOW_DIR)
+	mkdir -p $(RESULT_ALP_DIR)
+
 .PHONY: install-tools
 install-tools:
 	# apt install
