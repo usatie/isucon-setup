@@ -34,15 +34,8 @@ DB_SLOW_LOG:=/var/log/mysql/mysql-slow.log
 DB_ERROR_LOG:=/var/log/mysql/error.log
 
 # Main commands
-.PHONY: oh-my-zsh
-oh-my-zsh:
-	sudo apt update
-	sudo apt upgrade
-	sudo apt install -y zsh
-	sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
 .PHONY: setup
-setup: addkey bash-setup zsh-setup vim-setup git-setup install-tools 
+setup: addkey vim-setup git-setup install-tools 
 
 .PHONY: get-conf
 get-conf: check-server-id get-db-conf get-nginx-conf get-service-file get-envsh
@@ -107,70 +100,55 @@ git-setup:
 	git config --global user.email "isucon@example.com"
 	git config --global user.name "isucon"
 	ssh-keygen -t ed25519
-	if grep -q "# git-setup" $(GITIGNORE_PATH); then
-		@echo "Already added to $(GITIGNORE_PATH)"
-	else
-		@echo "# git-setup"
-		@echo "/*" >> $(GITIGNORE_PATH)
-		@echo "!.gitignore" >> $(GITIGNORE_PATH)
-		@echo "!env.sh" >> $(GITIGNORE_PATH)
-		@echo "!webapp" >> $(GITIGNORE_PATH)
-		@echo "!etc" >> $(GITIGNORE_PATH)
-		@echo "!bench" >> $(GITIGNORE_PATH)
-		@echo "!isucon-setup" >> $(GITIGNORE_PATH)
-		@echo "!results" >> $(GITIGNORE_PATH)
-		@echo "!s1" >> $(GITIGNORE_PATH)
-		@echo "!s2" >> $(GITIGNORE_PATH)
-		@echo "!s3" >> $(GITIGNORE_PATH)
-	fi
+	@echo "# git-setup"
+	@echo "/*" >> $(GITIGNORE_PATH)
+	@echo "!.gitignore" >> $(GITIGNORE_PATH)
+	@echo "!env.sh" >> $(GITIGNORE_PATH)
+	@echo "!webapp" >> $(GITIGNORE_PATH)
+	@echo "!etc" >> $(GITIGNORE_PATH)
+	@echo "!bench" >> $(GITIGNORE_PATH)
+	@echo "!isucon-setup" >> $(GITIGNORE_PATH)
+	@echo "!results" >> $(GITIGNORE_PATH)
+	@echo "!s1" >> $(GITIGNORE_PATH)
+	@echo "!s2" >> $(GITIGNORE_PATH)
+	@echo "!s3" >> $(GITIGNORE_PATH)
+
+.PHONY: oh-my-zsh
+oh-my-zsh:
+	sudo apt update
+	sudo apt upgrade
+	sudo apt install -y zsh
+	sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 .PHONY: zsh-setup
 zsh-setup:
 	# zsh-autosuggestions
 	git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-	if grep -q "# zsh-setup" $(ZSHRC_PATH); then
-		@echo "Already added to $(ZSHRC_PATH)"
-	else
-		@echo "# zsh-setup"
-		@echo 'export VISUAL=vim' >> $(ZSHRC_PATH)
-		@echo 'export EDITOR="$VISUAL"' >> $(ZSHRC_PATH)
-		@echo 'plugins+=(zsh-autosuggestions)' >> $(ZSHRC_PATH)
-		@echo 'source $ZSH/oh-my-zsh.sh' >> $(ZSHRC_PATH)
-		@echo 'export PATH=$HOME/local/go/bin:$HOME/go/bin:$PATH' >> $(ZSHRC_PATH)
-		@echo 'export GOROOT=/home/isucon/local/go' >> $(ZSHRC_PATH)
-		source $(ZSHRC_PATH)
-	fi
-
-.PHONY: bash-setup
-bash-setup:
-	if grep -q "# bash-setup" $(BASHRC_PATH); then
-		@echo "Already added to $(BASHRC_PATH)"
-	else
-		@echo "# bash-setup"
-		@echo 'export VISUAL=vim' >> $(BASHRC_PATH)
-		@echo 'export EDITOR="$VISUAL"' >> $(BASHRC_PATH)
-	fi
+	@echo "# zsh-setup"
+	@echo 'export VISUAL=vim' >> $(ZSHRC_PATH)
+	@echo 'export EDITOR="$VISUAL"' >> $(ZSHRC_PATH)
+	@echo 'plugins+=(zsh-autosuggestions)' >> $(ZSHRC_PATH)
+	@echo 'source $ZSH/oh-my-zsh.sh' >> $(ZSHRC_PATH)
+	@echo 'export PATH=$HOME/local/go/bin:$HOME/go/bin:$PATH' >> $(ZSHRC_PATH)
+	@echo 'export GOROOT=/home/isucon/local/go' >> $(ZSHRC_PATH)
+	@echo "Restart zsh by 'exec $SHELL'"
 
 .PHONY: vim-setup
 vim-setup:
-	if grep -q "# vim-setup" $(VIMRC_PATH); then
-		@echo "Already added to $(VIMRC_PATH)"
-	else
-		@echo "# vim-setup"
-		@echo 'set term=xterm-256color' >> $(VIMRC_PATH
-		@echo 'syntax on' >> $(VIMRC_PATH)
-		@echo 'set tabstop=4' >> $(VIMRC_PATH)
-		@echo 'set shiftwidth=4' >> $(VIMRC_PATH)
-		@echo 'set autoindent' >> $(VIMRC_PATH)
-		@echo 'set number' >> $(VIMRC_PATH)
-		@echo "set viminfo='100,<200,s10,h" >> $(VIMRC_PATH)
-		@echo "" >> $(VIMRC_PATH)
-		@echo 'call plug#begin()' >> $(VIMRC_PATH)
-		@echo "  Plug 'prabirshrestha/vim-lsp'" >> $(VIMRC_PATH)
-		@echo "  Plug 'mattn/vim-lsp-settings'" >> $(VIMRC_PATH)
-		@echo "  Plug 'mattn/vim-goimports'" >> $(VIMRC_PATH)
-		@echo 'call plug#end()' >> $(VIMRC_PATH)
-	fi
+	@echo "# vim-setup"
+	@echo 'set term=xterm-256color' >> $(VIMRC_PATH
+	@echo 'syntax on' >> $(VIMRC_PATH)
+	@echo 'set tabstop=4' >> $(VIMRC_PATH)
+	@echo 'set shiftwidth=4' >> $(VIMRC_PATH)
+	@echo 'set autoindent' >> $(VIMRC_PATH)
+	@echo 'set number' >> $(VIMRC_PATH)
+	@echo "set viminfo='100,<200,s10,h" >> $(VIMRC_PATH)
+	@echo "" >> $(VIMRC_PATH)
+	@echo 'call plug#begin()' >> $(VIMRC_PATH)
+	@echo "  Plug 'prabirshrestha/vim-lsp'" >> $(VIMRC_PATH)
+	@echo "  Plug 'mattn/vim-lsp-settings'" >> $(VIMRC_PATH)
+	@echo "  Plug 'mattn/vim-goimports'" >> $(VIMRC_PATH)
+	@echo 'call plug#end()' >> $(VIMRC_PATH)
 	# vim-plug
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 		https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -188,17 +166,17 @@ endif
 .PHONY: set-as-s1
 set-as-s1:
 	echo "SERVER_ID=s1" >> env.sh
-	mkdir -P $(HOME)/s1
+	mkdir -p $(HOME)/s1
 
 .PHONY: set-as-s2
 set-as-s2:
 	echo "SERVER_ID=s2" >> env.sh
-	mkdir -P $(HOME)/s2
+	mkdir -p $(HOME)/s2
 
 .PHONY: set-as-s3
 set-as-s3:
 	echo "SERVER_ID=s3" >> env.sh
-	mkdir -P $(HOME)/s3
+	mkdir -p $(HOME)/s3
 
 .PHONY: get-db-conf
 get-db-conf:
