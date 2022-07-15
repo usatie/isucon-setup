@@ -126,12 +126,12 @@ zsh-setup:
 	git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 	@echo "# zsh-setup"
 	@echo 'export VISUAL=vim' >> $(ZSHRC_PATH)
-	@echo 'export EDITOR="$VISUAL"' >> $(ZSHRC_PATH)
+	@echo 'export EDITOR="$$VISUAL"' >> $(ZSHRC_PATH)
 	@echo 'plugins+=(zsh-autosuggestions)' >> $(ZSHRC_PATH)
-	@echo 'source $ZSH/oh-my-zsh.sh' >> $(ZSHRC_PATH)
-	@echo 'export PATH=$HOME/local/go/bin:$HOME/go/bin:$PATH' >> $(ZSHRC_PATH)
+	@echo 'source $$ZSH/oh-my-zsh.sh' >> $(ZSHRC_PATH)
+	@echo 'export PATH=$$HOME/local/go/bin:$$HOME/go/bin:$$PATH' >> $(ZSHRC_PATH)
 	@echo 'export GOROOT=/home/isucon/local/go' >> $(ZSHRC_PATH)
-	@echo "Restart zsh by 'exec $SHELL'"
+	@echo 'Restart zsh by "exec $$SHELL"'
 
 .PHONY: vim-setup
 vim-setup:
