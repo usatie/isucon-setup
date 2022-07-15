@@ -36,7 +36,7 @@ DB_ERROR_LOG:=/var/log/mysql/error.log
 ALP_CONFIG_DIR:=$(HOME)/tool-config/alp
 ALP_CONFIG:=$(ALP_CONFIG_DIR)/config.yml
 TRDSQL_DIR:=$(HOME)/tool-config/trdsql
-TRDSQL_SQL:=$(TRDSQL_CONFIG_DIR)/access.sql
+TRDSQL_SQL:=$(TRDSQL_DIR)/access.sql
 
 # Main commands
 .PHONY: setup
@@ -57,7 +57,7 @@ slow-query:
 
 .PHONY: alp
 alp:
-	sudo alp ltsv --file=$(NGINX_LOG) --config=~/$(ALP_CONFIG)
+	sudo alp ltsv --file=$(NGINX_LOG) --config=$(ALP_CONFIG)
 
 .PHONY: pprof-record
 pprof-record:
@@ -85,14 +85,14 @@ install-tools:
 		&& sudo install ./alp /usr/local/bin/alp \
 		&& rm alp_linux_amd64.zip alp
 	mkdir -p $(ALP_CONFIG_DIR)
-	wget https://github.com/usatie/isucon-setup/blob/main/tool-config/alp/config.yml -O $(ALP_CONFIG)
+	wget https://raw.githubusercontent.com/usatie/isucon-setup/main/tool-config/alp/config.yml -O $(ALP_CONFIG)
 	# trdsql
 	wget https://github.com/noborus/trdsql/releases/download/v0.10.0/trdsql_v0.10.0_linux_amd64.zip \
 		&& unzip trdsql_v0.10.0_linux_amd64.zip \
 		&& sudo install ./trdsql_v0.10.0_linux_amd64/trdsql /usr/local/bin/trdsql \
 		&& rm -rf trdsql_v0.10.0_linux_amd64.zip trdsql_v0.10.0_linux_amd64
 	mkdir -p $(TRDSQL_DIR)
-	wget https://github.com/usatie/isucon-setup/blob/main/tool-config/trdsql/access.sql -O $(TRDSQL_SQL)
+	wget https://raw.githubusercontent.com/usatie/isucon-setup/main/tool-config/trdsql/access.sql -O $(TRDSQL_SQL)
 	# go (goimports/pprof)
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install github.com/google/pprof@latest
