@@ -99,14 +99,14 @@ addkey:
 git-setup:
 	git config --global user.email "isucon@example.com"
 	git config --global user.name "isucon"
-	ssh-keygen -t ed25519
+	ssh-keygen
 	@echo "# git-setup"
 	@echo "/*" >> $(GITIGNORE_PATH)
+	@echo "/env.sh" >> $(GITIGNORE_PATH)
 	@echo "!$(BIN_NAME)" >> $(GITIGNORE_PATH)
 	@echo "!webapp" >> $(GITIGNORE_PATH)
 	@echo "!Makefile" >> $(GITIGNORE_PATH)
 	@echo "!.gitignore" >> $(GITIGNORE_PATH)
-	@echo "!env.sh" >> $(GITIGNORE_PATH)
 	@echo "!results" >> $(GITIGNORE_PATH)
 	@echo "!s1" >> $(GITIGNORE_PATH)
 	@echo "!s2" >> $(GITIGNORE_PATH)
@@ -202,19 +202,19 @@ get-envsh:
 
 .PHONY: deploy-db-conf
 deploy-db-conf:
-	sudo rsync -qauh --no-o --no-g ~$(DB_PATH) $(DB_DIR_PATH)
+	sudo rsync -qauh --no-o --no-g ~/$(SERVER_ID)$(DB_PATH) $(DB_DIR_PATH)
 
 .PHONY: deploy-nginx-conf
 deploy-nginx-conf:
-	sudo rsync -qauh --no-o --no-g ~$(NGINX_PATH) $(NGINX_DIR_PATH)
+	sudo rsync -qauh --no-o --no-g ~/$(SERVER_ID)$(NGINX_PATH) $(NGINX_DIR_PATH)
 
 .PHONY: deploy-service-conf
 deploy-service-conf:
-	sudo rsync -qauh --no-o --no-g ~$(SYSTEMD_PATH) $(SYSTEMD_DIR_PATH)
+	sudo rsync -qauh --no-o --no-g ~/$(SERVER_ID)$(SYSTEMD_PATH) $(SYSTEMD_DIR_PATH)
 
 .PHONY: deploy-envsh
 deploy-envsh:
-	sudo rsync -qauh --no-o --no-g ~$(ENVSH_PATH) $(ENVSH_DIR_PATH)
+	sudo rsync -qauh --no-o --no-g ~/$(SERVER_ID)$(ENVSH_PATH) $(ENVSH_DIR_PATH)
 
 .PHONY: build
 build:
