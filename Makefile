@@ -102,12 +102,11 @@ git-setup:
 	ssh-keygen -t ed25519
 	@echo "# git-setup"
 	@echo "/*" >> $(GITIGNORE_PATH)
+	@echo "!$(BIN_NAME)" >> $(GITIGNORE_PATH)
+	@echo "!webapp" >> $(GITIGNORE_PATH)
+	@echo "!Makefile" >> $(GITIGNORE_PATH)
 	@echo "!.gitignore" >> $(GITIGNORE_PATH)
 	@echo "!env.sh" >> $(GITIGNORE_PATH)
-	@echo "!webapp" >> $(GITIGNORE_PATH)
-	@echo "!etc" >> $(GITIGNORE_PATH)
-	@echo "!bench" >> $(GITIGNORE_PATH)
-	@echo "!isucon-setup" >> $(GITIGNORE_PATH)
 	@echo "!results" >> $(GITIGNORE_PATH)
 	@echo "!s1" >> $(GITIGNORE_PATH)
 	@echo "!s2" >> $(GITIGNORE_PATH)
