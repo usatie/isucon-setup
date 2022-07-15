@@ -38,7 +38,11 @@ ALP_CONFIG:=$(ALP_CONFIG_DIR)/config.yml
 TRDSQL_DIR:=$(HOME)/tool-config/trdsql
 TRDSQL_SQL:=$(TRDSQL_DIR)/access.sql
 
+DURATION=75
 RESULT_DIR:=$(HOME)/results
+RESULT_TOP_DIR:=$(RESULT_DIR)/top
+RESULT_DSTAT_DIR:=$(RESULT_DIR)/dstat
+RESULT_APP_DIR:=$(RESULT_DIR)/app
 RESULT_SLOW_DIR:=$(RESULT_DIR)/slow
 RESULT_ALP_DIR:=$(RESULT_DIR)/alp
 
@@ -53,7 +57,33 @@ get-conf: check-server-id get-db-conf get-nginx-conf get-service-file get-envsh
 deploy-conf: check-server-id deploy-db-conf deploy-nginx-conf deploy-service-file deploy-envsh
 
 .PHONY: bench
-bench: check-server-id rotate build deploy-conf restart watch-service-log
+bench: check-server-id rotate build deploy-conf restart
+	# Stats
+	$(MAKE) top &
+	$(MAKE) dstat &
+	$(MAKE) pprof &
+	
+	# App log
+	mkdir -p $(RESULT_APP_DIR)
+	$(eval n := $(shell ls -l $(RESULT_APP_DIR) | wc | awk '{print $$1}'))
+	timeout -s KILL $(DURATION) sudo journalctl -f -u $(BIN_NAME) \
+		| tee $(RESULT_APP_DIR)/$(n).log
+
+	# Digests
+	$(MAKE) slow-query
+	$(MAKE) alp
+
+.PHONY: top
+top:
+	mkdir -p $(RESULT_TOP_DIR)
+	$(eval n := $(shell ls -l $(RESULT_TOP_DIR) | wc | awk '{print $$1}'))
+	LINES=20 top -b -d 1 -n $(DURATION) -w > $(RESULT_TOP_DIR)/$(n).log
+
+.PHONY: dstat
+dstat:
+	mkdir -p $(RESULT_DSTAT_DIR)
+	$(eval n := $(shell ls -l $(RESULT_DSTAT_DIR) | wc | awk '{print $$1}'))
+	dstat -tcdm --tcp -n 1 $(DURATION) > $(RESULT_DSTAT_DIR)/$(n).log
 
 .PHONY: slow-query
 slow-query:
@@ -71,12 +101,12 @@ alp:
 
 .PHONY: pprof-record
 pprof-record:
-	go tool pprof http://localhost:6060/debug/pprof/profile
+	go tool pprof -raw -seconds $(DURATION) http://localhost:6060/debug/pprof/profile
 
 .PHONY: pprof-check
 pprof-check:
-	$(eval latest := $(shell ls -rt pprof/ | tail -n 1))
-	go tool pprof -http=localhost:8090 pprof/$(latest)
+	$(eval latest := $(shell ls -rt $(HOME)/pprof/ | tail -n 1))
+	go tool pprof -http=localhost:8090 $(HOME)/pprof/$(latest)
 
 .PHONY: access-db
 access-db:
