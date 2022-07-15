@@ -9,6 +9,10 @@ BIN_NAME:=isucondition
 BUILD_DIR:=/home/isucon/webapp/go
 SERVICE_NAME:=$(BIN_NAME).go.service
 
+GITHUB_USER_1:=usatie
+GITHUB_USER_2:=hiroshi-kubota-rh
+GITHUB_USER_3:=nao215912
+
 # paths should be abosolute path
 DB_PATH:=/etc/mysql
 NGINX_PATH:=/etc/nginx
@@ -34,11 +38,11 @@ DB_ERROR_LOG:=/var/log/mysql/error.log
 oh-my-zsh:
 	sudo apt update
 	sudo apt upgrade
-	sudo apt install zsh
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	sudo apt install -y zsh
+	sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 .PHONY: setup
-setup: install-tools bash-setup zsh-setup vim-setup git-setup
+setup: addkey install-tools bash-setup zsh-setup vim-setup git-setup
 
 .PHONY: get-conf
 get-conf: check-server-id get-db-conf get-nginx-conf get-service-file get-envsh
@@ -92,6 +96,13 @@ install-tools:
 	go install github.com/google/pprof@latest
 	# zsh-autosuggestions
 	git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+
+.PHONYE: addkey
+addkey:
+	mkdir -p ~/.ssh
+	curl https://github.com/$(GITHUB_USER_1).keys >> ~/.ssh/authorized_keys
+	curl https://github.com/$(GITHUB_USER_2).keys >> ~/.ssh/authorized_keys
+	curl https://github.com/$(GITHUB_USER_3).keys >> ~/.ssh/authorized_keys
 
 .PHONY: git-setup
 git-setup:
