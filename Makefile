@@ -38,6 +38,10 @@ ALP_CONFIG:=$(ALP_CONFIG_DIR)/config.yml
 TRDSQL_DIR:=$(HOME)/tool-config/trdsql
 TRDSQL_SQL:=$(TRDSQL_DIR)/access.sql
 
+RESULT_DIR:=$(HOME)/results
+RESULT_SLOW_DIR:=$(RESULT_DIR)/slow
+RESULT_ALP_DIR:=$(RESULT_DIR)/alp
+
 # Main commands
 .PHONY: setup
 setup: addkey vim-setup git-setup install-tools 
@@ -49,15 +53,21 @@ get-conf: check-server-id get-db-conf get-nginx-conf get-service-file get-envsh
 deploy-conf: check-server-id deploy-db-conf deploy-nginx-conf deploy-service-file deploy-envsh
 
 .PHONY: bench
-bench: check-server-id mv-logs build deploy-conf restart watch-service-log
+bench: check-server-id rotate build deploy-conf restart watch-service-log
 
 .PHONY: slow-query
 slow-query:
-	sudo pt-query-digest $(DB_SLOW_LOG)
+	mkdir -p $(RESULT_SLOW_DIR)
+	$(eval n := $(shell ls -l $(RESULT_SLOW_DIR) | wc | awk '{print $$1}'))
+	sudo pt-query-digest --explain h=$(MYSQL_HOST),u=$(MYSQL_USER),p=$(MYSQL_PASS) $(DB_SLOW_LOG) \
+		| tee $(RESULT_SLOW_DIR)/$(n).digest
 
 .PHONY: alp
 alp:
-	sudo alp ltsv --file=$(NGINX_LOG) --config=$(ALP_CONFIG)
+	mkdir -p $(RESULT_ALP_DIR)
+	$(eval n := $(shell ls -l $(RESULT_ALP_DIR) | wc | awk '{print $$1}'))
+	sudo alp ltsv --file=$(NGINX_LOG) --config=$(ALP_CONFIG) \
+		| tee $(RESULT_ALP_DIR)/$(n).digest
 
 .PHONY: pprof-record
 pprof-record:
@@ -238,8 +248,8 @@ restart:
 	sudo systemctl restart nginx
 	sudo systemctl restart $(SERVICE_NAME)
 
-.PHONY: mv-logs
-mv-logs:
+.PHONY: rotate
+rotate:
 	sudo truncate $(NGINX_LOG) -s 0
 	sudo truncate $(NGINX_ERROR_LOG) -s 0
 	sudo truncate $(DB_SLOW_LOG) -s 0
