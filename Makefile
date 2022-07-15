@@ -208,8 +208,8 @@ deploy-db-conf:
 deploy-nginx-conf:
 	sudo rsync -qauh --no-o --no-g ~/$(SERVER_ID)$(NGINX_PATH) $(NGINX_DIR_PATH)
 
-.PHONY: deploy-service-conf
-deploy-service-conf:
+.PHONY: deploy-service-file
+deploy-service-file:
 	sudo rsync -qauh --no-o --no-g ~/$(SERVER_ID)$(SYSTEMD_PATH) $(SYSTEMD_DIR_PATH)
 
 .PHONY: deploy-envsh
