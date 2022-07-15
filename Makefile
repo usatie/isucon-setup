@@ -1,17 +1,17 @@
-#include $HOME/env.sh
+include $(HOME)/env.sh
 
 # Environment Variables
 # SERVER_ID: defined in env.sh
 
 # Configure specific values before use
-USER:=isucon
-BIN_NAME:=isucondition
-BUILD_DIR:=/home/isucon/webapp/go
-SERVICE_NAME:=$(BIN_NAME).go.service
-
 GITHUB_USER_1:=usatie
 GITHUB_USER_2:=hiroshi-kubota-rh
 GITHUB_USER_3:=nao215912
+
+USER:=isucon
+BIN_NAME:=isucondition
+BUILD_DIR:=$(HOME)/webapp/go
+SERVICE_NAME:=$(BIN_NAME).go.service
 
 # paths should be abosolute path
 DB_PATH:=/etc/mysql
@@ -136,7 +136,7 @@ zsh-setup:
 .PHONY: vim-setup
 vim-setup:
 	@echo "# vim-setup"
-	@echo 'set term=xterm-256color' >> $(VIMRC_PATH
+	@echo 'set term=xterm-256color' >> $(VIMRC_PATH)
 	@echo 'syntax on' >> $(VIMRC_PATH)
 	@echo 'set tabstop=4' >> $(VIMRC_PATH)
 	@echo 'set shiftwidth=4' >> $(VIMRC_PATH)
@@ -180,21 +180,25 @@ set-as-s3:
 
 .PHONY: get-db-conf
 get-db-conf:
+	mkdir -p ~/$(SERVER_ID)$(DB_DIR_PATH)
 	sudo rsync -qauh $(DB_PATH) ~/$(SERVER_ID)$(DB_DIR_PATH)
 	sudo chown $(USER) -R ~/$(SERVER_ID)$(DB_DIR_PATH)
 
 .PHONY: get-nginx-conf
 get-nginx-conf:
+	mkdir -p ~/$(SERVER_ID)$(NGINX_DIR_PATH)
 	sudo rsync -qauh $(NGINX_PATH) ~/$(SERVER_ID)$(NGINX_DIR_PATH)
 	sudo chown $(USER) -R ~/$(SERVER_ID)$(NGINX_DIR_PATH)
 
 .PHONY: get-service-file
 get-service-file:
+	mkdir -p ~/$(SERVER_ID)$(SYSTEMD_DIR_PATH)
 	sudo rsync -qauh $(SYSTEMD_PATH) ~/$(SERVER_ID)$(SYSTEMD_DIR_PATH)
 	sudo chown $(USER) -R ~/$(SERVER_ID)$(SYSTEMD_DIR_PATH)
 
 .PHONY: get-envsh
 get-envsh:
+	mkdir -p ~/$(SERVER_ID)$(ENVSH_DIR_PATH)
 	rsync -qauh $(ENVSH_PATH) ~/$(SERVER_ID)$(ENVSH_DIR_PATH)
 
 .PHONY: deploy-db-conf
