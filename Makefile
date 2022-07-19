@@ -3,15 +3,19 @@ include $(HOME)/env.sh
 # Environment Variables
 # SERVER_ID: defined in env.sh
 
-# Configure specific values before use
-GITHUB_USER_1:=usatie
-GITHUB_USER_2:=hiroshi-kubota-rh
-GITHUB_USER_3:=nao215912
-
+# 使用する前に変更すべき設定値
 USER:=isucon
 BIN_NAME:=isucondition
 BUILD_DIR:=$(HOME)/webapp/go
 SERVICE_NAME:=$(BIN_NAME).go.service
+
+# Configurable (but unnecessary to change)
+GITHUB_USER_1:=usatie
+GITHUB_USER_2:=hiroshi-kubota-rh
+GITHUB_USER_3:=nao215912
+GITHUB_REPO:=usatie/isucon12q
+GITHUB_ADDKEY_URL:=https://github.com/$(GITHUB_REPO)/settings/keys/new
+GITHUB_REPO_URL:=git@github.com:$(GITHUB_REPO).git
 
 # paths should be abosolute path
 DB_PATH:=/etc/mysql
@@ -48,7 +52,7 @@ RESULT_ALP_DIR:=$(RESULT_DIR)/alp
 
 # Main commands
 .PHONY: setup
-setup: addkey vim-setup git-setup install-tools makedir
+setup: addkey vim-setup git-setup install-tools makedir keygen
 
 .PHONY: get-conf
 get-conf: check-server-id get-db-conf get-nginx-conf get-service-file get-envsh
@@ -64,14 +68,23 @@ bench: check-server-id rotate build deploy-conf restart
 	$(MAKE) pprof-record &
 	
 	# App log
-	@$(MAKE) app-log &
+	@$(MAKE) app-log
 
-	# wait for bench to finish
-	sleep $(DURATION)
+.PHONY: bench-app
+bench-app: check-server-id rotate build deploy-conf restart
+	# Stats
+	$(MAKE) top &
+	$(MAKE) dstat &
+	$(MAKE) pprof-record &
+	
+	# App log
+	@$(MAKE) app-log
 
-	# Digests
-	$(MAKE) slow-query
-	$(MAKE) alp
+.PHONY: bench-db
+bench-db: check-server-id rotate deploy-conf restart
+	# Stats
+	$(MAKE) top &
+	$(MAKE) dstat &
 
 .PHONY: top
 top:
@@ -89,11 +102,7 @@ dstat:
 
 .PHONY: app-log
 app-log:
-	@mkdir -p $(RESULT_APP_DIR)
-	@$(eval n = $(shell ls -l $(RESULT_APP_DIR) | wc | awk '{print $$1}'))
-	@mkdir -p $(RESULT_APP_DIR)/$(n)
-	sudo journalctl -f -u $(SERVICE_NAME) \
-		| tee $(RESULT_APP_DIR)/$(n)/$(SERVER_ID).log
+	sudo journalctl -f -u $(SERVICE_NAME)
 
 .PHONY: slow-query
 slow-query:
@@ -135,11 +144,17 @@ makedir:
 	mkdir -p $(RESULT_SLOW_DIR)
 	mkdir -p $(RESULT_ALP_DIR)
 
+.PHONY: keygen
+keygen:
+	ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
+	cat ~/.ssh/id_rsa.pub
+	echo "Add this key to the repository $(GITHUB_ADDKEY_URL)"
+
 .PHONY: install-tools
 install-tools:
 	# apt install
 	sudo apt update
-	sudo apt upgrade
+	sudo apt upgrade -y
 	sudo apt install -y percona-toolkit dstat git unzip snapd graphviz tree net-tools iotop apache2-utils
 	# alp
 	wget https://github.com/tkuchiki/alp/releases/download/v1.0.9/alp_linux_amd64.zip \
@@ -155,6 +170,12 @@ install-tools:
 		&& rm -rf trdsql_v0.10.0_linux_amd64.zip trdsql_v0.10.0_linux_amd64
 	mkdir -p $(TRDSQL_DIR)
 	wget https://raw.githubusercontent.com/usatie/isucon-setup/main/tool-config/trdsql/access.sql -O $(TRDSQL_SQL)
+
+.PHONYE: go-setup
+go-setup:
+	mkdir -p $(HOME)/local
+	if [ -d $(HOME)/local/go ]; then mv $(HOME)/local/go $(HOME)/local/go.orig; fi
+	curl -L https://go.dev/dl/go1.18.3.linux-amd64.tar.gz | tar -zxf - -C $(HOME)/local
 	# go (goimports/pprof)
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install github.com/google/pprof@latest
@@ -170,7 +191,6 @@ addkey:
 git-setup:
 	git config --global user.email "isucon@example.com"
 	git config --global user.name "isucon"
-	ssh-keygen
 	@echo "# git-setup"
 	@echo "/*" >> $(GITIGNORE_PATH)
 	@echo "/env.sh" >> $(GITIGNORE_PATH)
@@ -201,7 +221,7 @@ zsh-setup:
 	@echo 'plugins+=(zsh-autosuggestions)' >> $(ZSHRC_PATH)
 	@echo 'source $$ZSH/oh-my-zsh.sh' >> $(ZSHRC_PATH)
 	@echo 'export PATH=$$HOME/local/go/bin:$$HOME/go/bin:$$PATH' >> $(ZSHRC_PATH)
-	@echo 'export GOROOT=/home/isucon/local/go' >> $(ZSHRC_PATH)
+	@echo 'export GOROOT=$$HOME/local/go' >> $(ZSHRC_PATH)
 	@echo 'Restart zsh by "exec $$SHELL"'
 
 .PHONY: vim-setup
