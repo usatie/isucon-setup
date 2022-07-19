@@ -89,14 +89,14 @@ bench-db: check-server-id rotate deploy-conf restart
 .PHONY: top
 top:
 	mkdir -p $(RESULT_TOP_DIR)
-	$(eval n := $(shell ls -l $(RESULT_TOP_DIR) || echo 1 | wc | awk '{print $$1}'))
+	$(eval n := $(shell (ls -l $(RESULT_TOP_DIR) || echo 1) | wc | awk '{print $$1}'))
 	mkdir -p $(RESULT_TOP_DIR)/$(n)
 	LINES=20 top -b -d 1 -n $(DURATION) -w > $(RESULT_TOP_DIR)/$(n)/$(SERVER_ID).log
 
 .PHONY: dstat
 dstat:
 	mkdir -p $(RESULT_DSTAT_DIR)
-	$(eval n := $(shell ls -l $(RESULT_DSTAT_DIR) || echo 1 | wc | awk '{print $$1}'))
+	$(eval n := $(shell (ls -l $(RESULT_DSTAT_DIR) || echo 1) | wc | awk '{print $$1}'))
 	mkdir -p $(RESULT_DSTAT_DIR)/$(n)
 	dstat -tcdm --tcp -n 1 $(DURATION) > $(RESULT_DSTAT_DIR)/$(n)/$(SERVER_ID).log
 
@@ -107,7 +107,7 @@ app-log:
 .PHONY: slow-query
 slow-query:
 	mkdir -p $(RESULT_SLOW_DIR)
-	$(eval n := $(shell ls -l $(RESULT_SLOW_DIR) || echo 1 | wc | awk '{print $$1}'))
+	$(eval n := $(shell (ls -l $(RESULT_SLOW_DIR) || echo 1) | wc | awk '{print $$1}'))
 	mkdir -p $(RESULT_SLOW_DIR)/$(n)
 	sudo pt-query-digest --explain h=$(MYSQL_HOST),u=$(MYSQL_USER),p=$(MYSQL_PASS) $(DB_SLOW_LOG) \
 		| tee $(RESULT_SLOW_DIR)/$(n)/$(SERVER_ID).digest
@@ -115,7 +115,7 @@ slow-query:
 .PHONY: alp
 alp:
 	mkdir -p $(RESULT_ALP_DIR)
-	$(eval n := $(shell ls -l $(RESULT_ALP_DIR) || echo 1 | wc | awk '{print $$1}'))
+	$(eval n := $(shell (ls -l $(RESULT_ALP_DIR) || echo 1) | wc | awk '{print $$1}'))
 	mkdir -p $(RESULT_ALP_DIR)/$(n)
 	sudo alp ltsv --file=$(NGINX_LOG) --config=$(ALP_CONFIG) \
 		| tee $(RESULT_ALP_DIR)/$(n)/$(SERVER_ID).digest
