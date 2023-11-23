@@ -219,6 +219,9 @@ zsh-setup:
 	@echo 'source $$ZSH/oh-my-zsh.sh' >> $(ZSHRC_PATH)
 	@echo 'export PATH=$$HOME/local/go/bin:$$HOME/go/bin:$$PATH' >> $(ZSHRC_PATH)
 	@echo 'export GOROOT=$$HOME/local/go' >> $(ZSHRC_PATH)
+	@echo '# zsh-autosuggestions' >> $(ZSHRC_PATH)
+	@echo 'bindkey '^o' autosuggest-accept' >> $(ZSHRC_PATH)
+	@echo 'PROMPT=$$USER@$$HOST:$$PROMPT' >> $(ZSHRC_PATH)
 	@echo 'Restart zsh by "exec $$SHELL"'
 
 .PHONY: vim-setup
