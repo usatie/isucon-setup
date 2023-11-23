@@ -1,7 +1,7 @@
-include $(HOME)/env.sh
+include $(HOME)/env
 
 # Environment Variables
-# SERVER_ID: defined in env.sh
+# SERVER_ID: defined in env
 
 # 使用する前に変更すべき設定値
 USER:=isucon
@@ -19,7 +19,8 @@ GITHUB_REPO_URL:=git@github.com:$(GITHUB_REPO).git
 DB_PATH:=/etc/mysql
 NGINX_PATH:=/etc/nginx
 SYSTEMD_PATH:=/etc/systemd
-ENVSH_PATH:=$(HOME)/env.sh
+ENV_NAME:=env
+ENVSH_PATH:=$(HOME)/$(ENV_NAME)
 DB_DIR_PATH:=/etc
 NGINX_DIR_PATH:=/etc
 SYSTEMD_DIR_PATH:=/etc
@@ -189,7 +190,7 @@ git-setup:
 	git config --global user.name "isucon"
 	@echo "# git-setup"
 	@echo "/*" >> $(GITIGNORE_PATH)
-	@echo "/env.sh" >> $(GITIGNORE_PATH)
+	@echo "/$(ENV_NAME)" >> $(GITIGNORE_PATH)
 	@echo "!$(BIN_NAME)" >> $(GITIGNORE_PATH)
 	@echo "!webapp" >> $(GITIGNORE_PATH)
 	@echo "!Makefile" >> $(GITIGNORE_PATH)
@@ -252,17 +253,17 @@ endif
 
 .PHONY: set-as-s1
 set-as-s1:
-	echo "SERVER_ID=s1" >> env.sh
+	echo "SERVER_ID=s1" >> $(ENVSH_PATH)
 	mkdir -p $(HOME)/s1
 
 .PHONY: set-as-s2
 set-as-s2:
-	echo "SERVER_ID=s2" >> env.sh
+	echo "SERVER_ID=s2" >> $(ENVSH_PATH)
 	mkdir -p $(HOME)/s2
 
 .PHONY: set-as-s3
 set-as-s3:
-	echo "SERVER_ID=s3" >> env.sh
+	echo "SERVER_ID=s3" >> $(ENVSH_PATH)
 	mkdir -p $(HOME)/s3
 
 .PHONY: get-db-conf
