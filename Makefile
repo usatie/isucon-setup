@@ -63,8 +63,8 @@ deploy-conf: check-server-id deploy-db-conf deploy-nginx-conf deploy-service-fil
 
 PHONY: bench-result-dir
 bench-result-dir: $(RESULT_DIR)
-    $(eval n := $(shell (ls -l $(RESULT_DIR) || echo 1) | wc -l))
-    mkdir -p $(RESULT_DIR)/$(n)
+	$(eval n := $(shell (ls -l $(RESULT_DIR) || echo 1) | wc -l))
+	mkdir -p $(RESULT_DIR)/$(n)
 
 .PHONY: bench
 bench: check-server-id rotate build deploy-conf restart bench-result-dir
@@ -191,6 +191,11 @@ git-setup:
 	@echo "!s1" >> $(GITIGNORE_PATH)
 	@echo "!s2" >> $(GITIGNORE_PATH)
 	@echo "!s3" >> $(GITIGNORE_PATH)
+	@echo "# Common"
+	@echo "$(BIN_NAME)" >> $(GITIGNORE_PATH)
+	@echo "*.mount" >> $(GITIGNORE_PATH)
+	@echo "*.swp" >> $(GITIGNORE_PATH)
+	@echo "*.out" >> $(GITIGNORE_PATH)
 
 .PHONY: oh-my-zsh
 oh-my-zsh:
