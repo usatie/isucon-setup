@@ -10,10 +10,8 @@ BUILD_DIR:=$(HOME)/webapp/go
 SERVICE_NAME:=$(BIN_NAME).go.service
 
 # Configurable (but unnecessary to change)
-GITHUB_USER_1:=usatie
-GITHUB_USER_2:=hiroshi-kubota-rh
-GITHUB_USER_3:=nao215912
-GITHUB_REPO:=usatie/isucon12q
+GITHUB_USER:=usatie
+GITHUB_REPO:=usatie/isucon13f
 GITHUB_ADDKEY_URL:=https://github.com/$(GITHUB_REPO)/settings/keys/new
 GITHUB_REPO_URL:=git@github.com:$(GITHUB_REPO).git
 
@@ -183,9 +181,7 @@ go-setup:
 .PHONYE: addkey
 addkey:
 	mkdir -p ~/.ssh
-	curl https://github.com/$(GITHUB_USER_1).keys >> ~/.ssh/authorized_keys
-	curl https://github.com/$(GITHUB_USER_2).keys >> ~/.ssh/authorized_keys
-	curl https://github.com/$(GITHUB_USER_3).keys >> ~/.ssh/authorized_keys
+	curl https://github.com/$(GITHUB_USER).keys >> ~/.ssh/authorized_keys
 
 .PHONY: git-setup
 git-setup:
