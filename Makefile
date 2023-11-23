@@ -9,7 +9,13 @@ BIN_NAME:=isucondition
 BUILD_DIR:=$(HOME)/webapp/go
 SERVICE_NAME:=$(BIN_NAME).go.service
 GO_DIR:=$(HOME)/local/go
+NODE_DIR:=$(HOME)/local/node
 ENV_NAME:=env
+MYSQL_HOST:=$(ISUCON_DB_HOST)
+MYSQL_PORT:=$(ISUCON_DB_PORT)
+MYSQL_USER:=$(ISUCON_DB_USER)
+MYSQL_PASS:=$(ISUCON_DB_PASSWORD)
+MYSQL_DBNAME:=$(ISUCON_DB_NAME)
 
 # Configurable (but unnecessary to change)
 GITHUB_USER:=usatie
@@ -44,11 +50,6 @@ TRDSQL_SQL:=$(TRDSQL_DIR)/access.sql
 
 DURATION=75
 RESULT_DIR:=$(HOME)/results
-RESULT_TOP_DIR:=$(RESULT_DIR)/top
-RESULT_DSTAT_DIR:=$(RESULT_DIR)/dstat
-RESULT_APP_DIR:=$(RESULT_DIR)/app
-RESULT_SLOW_DIR:=$(RESULT_DIR)/slow
-RESULT_ALP_DIR:=$(RESULT_DIR)/alp
 
 # Main commands
 .PHONY: setup
@@ -60,18 +61,13 @@ get-conf: check-server-id get-db-conf get-nginx-conf get-service-file get-envsh
 .PHONY: deploy-conf
 deploy-conf: check-server-id deploy-db-conf deploy-nginx-conf deploy-service-file deploy-envsh
 
-.PHONY: bench
-bench: check-server-id rotate build deploy-conf restart
-	# Stats
-	$(MAKE) top &
-	$(MAKE) dstat &
-	$(MAKE) pprof-record &
-	
-	# App log
-	@$(MAKE) app-log
+PHONY: bench-result-dir
+bench-result-dir: $(RESULT_DIR)
+    $(eval n := $(shell (ls -l $(RESULT_DIR) || echo 1) | wc -l))
+    mkdir -p $(RESULT_DIR)/$(n)
 
-.PHONY: bench-app
-bench-app: check-server-id rotate build deploy-conf restart
+.PHONY: bench
+bench: check-server-id rotate build deploy-conf restart bench-result-dir
 	# Stats
 	$(MAKE) top &
 	$(MAKE) dstat &
@@ -81,44 +77,39 @@ bench-app: check-server-id rotate build deploy-conf restart
 	@$(MAKE) app-log
 
 .PHONY: bench-db
-bench-db: check-server-id rotate deploy-conf restart
+bench-db: check-server-id rotate deploy-conf restart bench-result-dir
 	# Stats
 	$(MAKE) top &
 	$(MAKE) dstat &
 
 .PHONY: top
-top:
-	mkdir -p $(RESULT_TOP_DIR)
-	$(eval n := $(shell (ls -l $(RESULT_TOP_DIR) || echo 1) | wc | awk '{print $$1}'))
-	mkdir -p $(RESULT_TOP_DIR)/$(n)
-	LINES=20 top -b -d 1 -n $(DURATION) -w > $(RESULT_TOP_DIR)/$(n)/$(SERVER_ID).log
+top: $(RESULT_DIR)
+	$(eval n := $(shell (ls -l $(RESULT_DIR) || echo 1) | tail +2 | wc -l))
+	LINES=20 top -b -d 1 -n $(DURATION) -w > $(RESULT_DIR)/$(n)/top.$(SERVER_ID).log
 
 .PHONY: dstat
-dstat:
-	mkdir -p $(RESULT_DSTAT_DIR)
-	$(eval n := $(shell (ls -l $(RESULT_DSTAT_DIR) || echo 1) | wc | awk '{print $$1}'))
-	mkdir -p $(RESULT_DSTAT_DIR)/$(n)
-	dstat -tcdm --tcp -n 1 $(DURATION) > $(RESULT_DSTAT_DIR)/$(n)/$(SERVER_ID).log
+dstat: $(RESULT_DIR)
+	$(eval n := $(shell (ls -l $(RESULT_DIR) || echo 1) | tail +2 | wc -l))
+	dstat -tcdm --tcp -n 1 $(DURATION) > $(RESULT_DIR)/$(n)/dstat.$(SERVER_ID).log
 
 .PHONY: app-log
 app-log:
 	sudo journalctl -f -u $(SERVICE_NAME)
 
+$(RESULT_DIR):
+	@mkdir -p $(RESULT_DIR)
+
 .PHONY: slow-query
-slow-query:
-	mkdir -p $(RESULT_SLOW_DIR)
-	$(eval n := $(shell (ls -l $(RESULT_SLOW_DIR) || echo 1) | wc | awk '{print $$1}'))
-	mkdir -p $(RESULT_SLOW_DIR)/$(n)
+slow-query: $(RESULT_DIR)
+	$(eval n := $(shell (ls -l $(RESULT_DIR) || echo 1) | tail +2 | wc -l))
 	sudo pt-query-digest --explain h=$(MYSQL_HOST),u=$(MYSQL_USER),p=$(MYSQL_PASS) $(DB_SLOW_LOG) \
-		| tee $(RESULT_SLOW_DIR)/$(n)/$(SERVER_ID).digest
+		| tee $(RESULT_DIR)/$(n)/slow-query.$(SERVER_ID).digest
 
 .PHONY: alp
-alp:
-	mkdir -p $(RESULT_ALP_DIR)
-	$(eval n := $(shell (ls -l $(RESULT_ALP_DIR) || echo 1) | wc | awk '{print $$1}'))
-	mkdir -p $(RESULT_ALP_DIR)/$(n)
+alp: $(RESULT_DIR)
+	$(eval n := $(shell (ls -l $(RESULT_DIR) || echo 1) | tail +2 | wc -l))
 	sudo alp ltsv --file=$(NGINX_LOG) --config=$(ALP_CONFIG) \
-		| tee $(RESULT_ALP_DIR)/$(n)/$(SERVER_ID).digest
+		| tee $(RESULT_DIR)/$(n)/alp.$(SERVER_ID).digest
 
 .PHONY: pprof-record
 pprof-record:
@@ -138,11 +129,7 @@ access-db:
 makedir:
 	mkdir -p $(ALP_CONFIG_DIR)
 	mkdir -p $(TRDSQL_DIR)
-	mkdir -p $(RESULT_TOP_DIR)
-	mkdir -p $(RESULT_DSTAT_DIR)
-	mkdir -p $(RESULT_APP_DIR)
-	mkdir -p $(RESULT_SLOW_DIR)
-	mkdir -p $(RESULT_ALP_DIR)
+	mkdir -p $(RESULT_DIR)
 
 .PHONY: keygen
 keygen:
@@ -218,7 +205,7 @@ zsh-setup:
 	@echo 'export EDITOR="$$VISUAL"' >> $(ZSHRC_PATH)
 	@echo 'plugins+=(zsh-autosuggestions)' >> $(ZSHRC_PATH)
 	@echo 'source $$ZSH/oh-my-zsh.sh' >> $(ZSHRC_PATH)
-	@echo 'export PATH=$(GO_DIR)/bin:$$HOME/go/bin:$$PATH' >> $(ZSHRC_PATH)
+	@echo 'export PATH=$(NODE_DIR)/bin:$(GO_DIR)/bin:$$HOME/go/bin:$$PATH' >> $(ZSHRC_PATH)
 	@echo 'export GOROOT=$(GO_DIR)' >> $(ZSHRC_PATH)
 	@echo '# zsh-autosuggestions' >> $(ZSHRC_PATH)
 	@echo 'bindkey '^o' autosuggest-accept' >> $(ZSHRC_PATH)
@@ -241,6 +228,8 @@ vim-setup:
 	@echo "  Plug 'mattn/vim-lsp-settings'" >> $(VIMRC_PATH)
 	@echo "  Plug 'mattn/vim-goimports'" >> $(VIMRC_PATH)
 	@echo 'call plug#end()' >> $(VIMRC_PATH)
+	@echo '" Copilot Configurations' >> $(VIMRC_PATH)
+	@echo "let g:copilot_filetypes = {'gitcommit': v:true, 'markdown': v:true, 'yaml': v:true, 'conf': v:true}" >> $(VIMRC_PATH)
 	# vim-plug
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 		https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
