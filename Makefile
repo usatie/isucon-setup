@@ -143,6 +143,9 @@ install-tools:
 	sudo apt update
 	sudo apt upgrade -y
 	sudo apt install -y percona-toolkit dstat git unzip snapd graphviz tree net-tools iotop apache2-utils
+	sudo add-apt-repository ppa:jonathonf/vim
+	sudo apt install vim -y
+
 	# alp
 	wget https://github.com/tkuchiki/alp/releases/download/v1.0.9/alp_linux_amd64.zip \
 		&& unzip alp_linux_amd64.zip \
@@ -234,6 +237,7 @@ vim-setup:
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 		https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 	vim +PlugInstall +qa
+	git clone https://github.com/github/copilot.vim.git ~/.vim/pack/github/start/copilot.vim
 
 .PHONY: check-server-id
 check-server-id:
