@@ -8,6 +8,8 @@ USER:=isucon
 BIN_NAME:=isucondition
 BUILD_DIR:=$(HOME)/webapp/go
 SERVICE_NAME:=$(BIN_NAME).go.service
+GO_DIR:=$(HOME)/local/go
+ENV_NAME:=env
 
 # Configurable (but unnecessary to change)
 GITHUB_USER:=usatie
@@ -19,7 +21,6 @@ GITHUB_REPO_URL:=git@github.com:$(GITHUB_REPO).git
 DB_PATH:=/etc/mysql
 NGINX_PATH:=/etc/nginx
 SYSTEMD_PATH:=/etc/systemd
-ENV_NAME:=env
 ENVSH_PATH:=$(HOME)/$(ENV_NAME)
 DB_DIR_PATH:=/etc
 NGINX_DIR_PATH:=/etc
@@ -173,7 +174,7 @@ install-tools:
 .PHONYE: go-setup
 go-setup:
 	mkdir -p $(HOME)/local
-	if [ -d $(HOME)/local/go ]; then mv $(HOME)/local/go $(HOME)/local/go.orig; fi
+	if [ -d $(GO_DIR) ]; then mv $(GO_DIR) $(GO_DIR)/go.orig; fi
 	curl -L https://go.dev/dl/go1.18.3.linux-amd64.tar.gz | tar -zxf - -C $(HOME)/local
 	# go (goimports/pprof)
 	go install golang.org/x/tools/cmd/goimports@latest
@@ -217,8 +218,8 @@ zsh-setup:
 	@echo 'export EDITOR="$$VISUAL"' >> $(ZSHRC_PATH)
 	@echo 'plugins+=(zsh-autosuggestions)' >> $(ZSHRC_PATH)
 	@echo 'source $$ZSH/oh-my-zsh.sh' >> $(ZSHRC_PATH)
-	@echo 'export PATH=$$HOME/local/go/bin:$$HOME/go/bin:$$PATH' >> $(ZSHRC_PATH)
-	@echo 'export GOROOT=$$HOME/local/go' >> $(ZSHRC_PATH)
+	@echo 'export PATH=$(GO_DIR)/bin:$$HOME/go/bin:$$PATH' >> $(ZSHRC_PATH)
+	@echo 'export GOROOT=$(GO_DIR)' >> $(ZSHRC_PATH)
 	@echo '# zsh-autosuggestions' >> $(ZSHRC_PATH)
 	@echo 'bindkey '^o' autosuggest-accept' >> $(ZSHRC_PATH)
 	@echo 'PROMPT=$$USER@$$HOST:$$PROMPT' >> $(ZSHRC_PATH)
