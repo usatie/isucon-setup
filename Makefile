@@ -217,7 +217,7 @@ zsh-setup:
 	@echo 'export GOROOT=$(GO_DIR)' >> $(ZSHRC_PATH)
 	@echo '# zsh-autosuggestions' >> $(ZSHRC_PATH)
 	@echo 'bindkey '^o' autosuggest-accept' >> $(ZSHRC_PATH)
-	@echo 'PROMPT=$$USER@$$HOST:$$PROMPT' >> $(ZSHRC_PATH)
+	@echo 'PROMPT=$(SERVER_ID):$$PROMPT' >> $(ZSHRC_PATH)
 	@echo 'Restart zsh by "exec $$SHELL"'
 
 .PHONY: vim-setup
