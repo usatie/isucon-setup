@@ -250,16 +250,19 @@ endif
 
 .PHONY: set-as-s1
 set-as-s1:
+	echo >> $(ENVSH_PATH)
 	echo "SERVER_ID=s1" >> $(ENVSH_PATH)
 	mkdir -p $(HOME)/s1
 
 .PHONY: set-as-s2
 set-as-s2:
+	echo >> $(ENVSH_PATH)
 	echo "SERVER_ID=s2" >> $(ENVSH_PATH)
 	mkdir -p $(HOME)/s2
 
 .PHONY: set-as-s3
 set-as-s3:
+	echo >> $(ENVSH_PATH)
 	echo "SERVER_ID=s3" >> $(ENVSH_PATH)
 	mkdir -p $(HOME)/s3
 
