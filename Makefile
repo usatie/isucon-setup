@@ -191,6 +191,8 @@ git-setup:
 	@echo "!s1" >> $(GITIGNORE_PATH)
 	@echo "!s2" >> $(GITIGNORE_PATH)
 	@echo "!s3" >> $(GITIGNORE_PATH)
+	@echo "!s4" >> $(GITIGNORE_PATH)
+	@echo "!s5" >> $(GITIGNORE_PATH)
 	@echo "# Common"
 	@echo "$(BIN_NAME)" >> $(GITIGNORE_PATH)
 	@echo "*.mount" >> $(GITIGNORE_PATH)
