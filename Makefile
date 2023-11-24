@@ -271,6 +271,18 @@ set-as-s3:
 	echo "SERVER_ID=s3" >> $(ENVSH_PATH)
 	mkdir -p $(HOME)/s3
 
+.PHONY: set-as-s4
+set-as-s4:
+	echo >> $(ENVSH_PATH)
+	echo "SERVER_ID=s4" >> $(ENVSH_PATH)
+	mkdir -p $(HOME)/s4
+
+.PHONY: set-as-s5
+set-as-s5:
+	echo >> $(ENVSH_PATH)
+	echo "SERVER_ID=s5" >> $(ENVSH_PATH)
+	mkdir -p $(HOME)/s5
+
 .PHONY: get-db-conf
 get-db-conf:
 	mkdir -p ~/$(SERVER_ID)$(DB_DIR_PATH)
