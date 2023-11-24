@@ -220,6 +220,8 @@ zsh-setup:
 	@echo '# zsh-autosuggestions' >> $(ZSHRC_PATH)
 	@echo 'bindkey '^o' autosuggest-accept' >> $(ZSHRC_PATH)
 	@echo 'PROMPT=$(SERVER_ID):$$PROMPT' >> $(ZSHRC_PATH)
+	@echo 'source env' >> $(ZSHRC_PATH)
+	@echo 'alias gcm="git commit -m ' "'"'[$$SERVER_ID]'"'" '"'>> $(ZSHRC_PATH)
 	@echo 'Restart zsh by "exec $$SHELL"'
 
 .PHONY: vim-setup
