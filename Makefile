@@ -236,7 +236,7 @@ vim-setup:
 	@echo "  Plug 'prabirshrestha/vim-lsp'" >> $(VIMRC_PATH)
 	@echo "  Plug 'mattn/vim-lsp-settings'" >> $(VIMRC_PATH)
 	@echo "  Plug 'mattn/vim-goimports'" >> $(VIMRC_PATH)
-	@3cho "  Plug 'tpope/vim-unimpaired'" >> $(VIMRC_PATH)
+	@echo "  Plug 'tpope/vim-unimpaired'" >> $(VIMRC_PATH)
 	@echo 'call plug#end()' >> $(VIMRC_PATH)
 	@echo '" Copilot Configurations' >> $(VIMRC_PATH)
 	@echo "let g:copilot_filetypes = {'gitcommit': v:true, 'markdown': v:true, 'yaml': v:true, 'conf': v:true}" >> $(VIMRC_PATH)
