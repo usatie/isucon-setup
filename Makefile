@@ -5,7 +5,7 @@ include $(HOME)/env
 
 # 使用する前に変更すべき設定値
 USER:=isucon
-BIN_NAME:=isucondition
+BIN_NAME:=isupipe
 BUILD_DIR:=$(HOME)/webapp/go
 SERVICE_NAME:=$(BIN_NAME).go.service
 GO_DIR:=$(HOME)/local/go
